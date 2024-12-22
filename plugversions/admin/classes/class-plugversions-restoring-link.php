@@ -19,51 +19,85 @@ class PlugVersions_Restoring_Link {
 	/**
 	 * Key.
 	 *
-	 * @var string $key
+	 * @var string $this->key
 	 * @since  0.0.6
 	 */	
 	public $key;
 
     /**
-	 * Version.
+	 * Plugins.
 	 *
-	 * @var string $version
-	 * @since  0.0.6
+	 * @var array $plugins
+	 * @since  0.0.8
 	 */	
-	public $version;
+	public $plugins;
 
     /**
-	 * Zip Name.
+	 * Main Constructor
 	 *
-	 * @var string $zip_name
 	 * @since  0.0.6
 	 */	
-	public $zip_name;
-
-    /**
-	 * Plugin Name.
-	 *
-	 * @var string $plugin_name
-	 * @since  0.0.6
-	 */	
-	public $plugin_name;
-
-    /**
-	 * Class constructor.
-	 *
-	 * @param string $key
-	 * @param string $version
-	 * @param string $zip_name
-	 * @param string $plugin_name
-	 * @param  0.0.6
-	 */	
-    public function __construct( $key, $version, $zip_name, $plugin_name ) {
-        $this->key = $key;
-        $this->version = $version;
-        $this->zip_name = $zip_name;
-        $this->plugin_name = $plugin_name;
-        add_filter( 'plugin_action_links' , array( $this, 'add_link' ), 10, 4 );
+    public function __construct() {
+        $this->key = eos_plugin_revision_key();
+		$this->plugins = array();
+		if( $this->key && current_user_can( 'activate_plugin' ) ) {
+			$this->plugins = $this->populate_plugins();
+			if( ! empty( $this->plugins ) ) {
+				add_filter( 'plugin_action_links' , array( $this, 'add_link' ), 10, 4 );
+			}
+			add_filter( 'all_plugins', array( $this, 'clean_plugins_list' ) );
+		}
     }
+
+    /**
+	 * Populate plugins data
+	 *
+	 * @since  0.0.6
+	 */	
+	public function populate_plugins() {
+		$all_plugin_files = scandir( WP_PLUGIN_DIR );
+		if( $all_plugin_files && is_array( $all_plugin_files ) && ! empty( $all_plugin_files ) ) {
+			$plugins = array();
+			foreach( $all_plugin_files as $plugin ) {
+				if( 'zip' === pathinfo( $plugin, PATHINFO_EXTENSION ) ) {
+					if( false !== strpos( $plugin, 'pr-' . $this->key  .'-' ) && false !== strpos( $plugin, '-ver-' ) ) {
+					$arr = explode( 'ver-', $plugin );
+					$arr = explode( '-', $arr[0] );
+					if( 'pr' === $arr[0] && isset( $arr[1] ) && $this->key === $arr[1] && isset( $arr[2] ) ) {
+						$version = $arr[2];
+						$plugin_name = str_replace( array( 'pr-' . $this->key . '-' . $version . '-ver-', '.zip' ), array( '', '' ), $plugin );
+						if( is_dir( WP_PLUGIN_DIR . '/' . $plugin_name ) ) {
+							if( ! isset( $plugins[$plugin_name]['versions'] ) ) {
+								$plugins[$plugin_name]['versions'] = array();
+							}
+							if( ! isset( $plugins[$plugin_name]['zips'] ) ) {
+								$plugins[$plugin_name]['zips'] = array();
+							}
+							$plugins[$plugin_name]['versions'][] = $version;
+							$plugins[$plugin_name]['zips'][] = $plugin;
+						}
+					}
+					}
+				}
+			}
+			return $plugins;
+		}
+	}
+
+    /**
+	 * Remove unzipped versions from the plugins list
+	 *
+	 * @param array $plugins
+	 * @param  0.0.8
+	 */	    
+    public function clean_plugins_list( $plugins ) {
+		foreach( $plugins as $plugin => $arr ) {
+			if( false !== strpos( '_' . $plugin, 'pr-' . $this->key ) ) {
+				unset( $plugins[$plugin] );
+			}
+		}
+		return $plugins;
+	}
 
     /**
 	 * Add action link to restore plugin version.
@@ -75,10 +109,24 @@ class PlugVersions_Restoring_Link {
 	 * @param  0.0.6
 	 */	    
     public function add_link( $actions, $plugin_file, $plugin_data, $context ) {
-        if( $this->plugin_name !== dirname( $plugin_file ) || ! current_user_can( 'activate_plugin' ) ) return $actions;
-        $links = isset( $actions['versions'] ) ? $actions['versions'] : '';
-        $links .= '<a class="plugin-revision-action" href="#" data-parent_plugin="'.esc_attr( $plugin_file ).'" data-dir="'.esc_attr( $this->zip_name ).'">'.sprintf( esc_html__( 'Replace with version: %s','plugversions' ), esc_attr( $this->version ) ).'</a> ';
-        $actions['versions'] = '<span class="plugin-revision-wrp"><a href="#">' . esc_html__( 'Revisions','plugin-revisioons' ) . '</a><span class="plugin-revisions-vers">' . rtrim( $links, ' ' ) . '</span></span>';
+		if( isset( $this->plugins[dirname( $plugin_file )] ) ) {
+			$plugin_vers = $this->plugins[dirname( $plugin_file )];
+			if( $plugin_vers && ! empty( $plugin_vers ) ) {
+				$links = '';
+				$n = 0;
+				foreach( $plugin_vers['versions'] as $version ) {
+					if( isset( $plugin_vers['zips'][$n] ) ) {
+						$zip_name = $plugin_vers['zips'][$n];
+						/* translators: version of the plugin. */
+						$links .= '<a class="plugin-revision-action" href="#" data-parent_plugin="'.esc_attr( $plugin_file ).'" data-dir="'.esc_attr( $zip_name ).'">'.sprintf( esc_html__( 'Replace with version: %s','plugversions' ), esc_attr( $version ) ).'</a> ';
+					}
+					++$n;
+				}
+				/* translators: the plugin revisions. */
+				$actions['versions'] = '<span class="plugin-revision-wrp"><a href="#">' . esc_html__( 'Revisions','plugversions' ) . '</a><span class="plugin-revisions-vers">' . rtrim( $links, ' ' ) . '</span></span>';
+				
+			}
+		}
         return $actions;
     }
 }

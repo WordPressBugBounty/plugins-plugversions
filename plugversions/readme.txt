@@ -3,8 +3,8 @@
 Contributors:      giuse
 Requires at least: 4.6
 Tested up to:      6.7
-Requires PHP:      5.6
-Stable tag:        0.0.7
+Requires PHP:      7.4
+Stable tag:        0.0.8
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Tags:              restore, update, backup, rollback, plugin versions
@@ -40,6 +40,10 @@ For any question or if something doesn't work as expected don't hesitate to open
 
 
 == Changelog ==
+
+= 0.0.8 =
+*Fix: Vulnerability when a new version is restored. Thanks to Arkadiusz Hydzik for finding the vulnerability.
+*Fix: Revisions list not working in the page of plugins.
 
 = 0.0.7 =
 *Fix: PHP warning

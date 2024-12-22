@@ -72,48 +72,6 @@ add_filter( 'upgrader_package_options',function( $options ) {
   return $options;
 },10,4 );
 
-add_filter( 'all_plugins',function( $plugins ){
-  /**
-   * Remove plugin revisions from plugins table in the page wp-admin/plugins.php
-   * Add link to restore previous unzipped versions for backward compatibility
-   *
-   * @since  0.0.1
-   */  
-  $key = eos_plugin_revision_key();
-  if( $key ){
-  	foreach( $plugins as $plugin => $arr ){
-  		if( false !== strpos( $plugin,'pr-'.$key.'-' ) ){
-  			unset( $plugins[$plugin] );
-        $parent_plugin = str_replace( 'pr-'.$key.'-','',$plugin );
-        $parent_pluginArr = explode( '-ver-',$parent_plugin );
-        $parent_plugin = isset( $parent_pluginArr[1] ) ? $parent_pluginArr[1] : $parent_plugin;
-        add_filter( 'plugin_action_links_'.$parent_plugin,function( $actions, $plugin_file, $plugin_data, $context ){
-          if( !current_user_can( 'activate_plugin' ) ) return $actions;
-          $key = eos_plugin_revision_key();
-          $all_dirs = scandir( dirname( PLUGIN_REVISIONS_PLUGIN_DIR ) );
-          if( $all_dirs && !empty( $all_dirs ) ){
-            $new_action_links = '';
-            $plugin = dirname( $plugin_file );
-            foreach( $all_dirs as $dir ){
-              if( false !== strpos( $dir,'pr-'.$key.'-' ) && substr( $dir,-strlen( $plugin ),strlen( $plugin ) ) === $plugin ){
-                $ver = str_replace( 'pr-'.$key.'-','',$dir );
-                $verArr = explode( '-ver-',$ver );
-                $ver = $verArr[0];
-                $new_action_links .= '<a class="plugin-revision-action" href="#" data-parent_plugin="'.esc_attr( $plugin_file ).'" data-dir="'.esc_attr( $dir ).'">'.sprintf( esc_html__( 'Replace with version: %s','plugversions' ),$ver ).'</a> ';
-              }
-            }
-            if( '' !== $new_action_links ){
-              $actions['versions'] = '<span class="plugin-revision-wrp"><a href="#">'.esc_html__( 'Revisions','plugin-revisioons' ).'</a><span class="plugin-revisions-vers">'.rtrim( $new_action_links,' ' ).'</span></span>';
-            }
-          }
-          return $actions;
-        },10,4 );
-  		}
-  	}
-  }
-	return $plugins;
-} );
-
 add_action( 'admin_head',function(){
   /**
    * Add style to properly show the revisions on the page of plugins
@@ -139,7 +97,8 @@ add_action( 'admin_head',function(){
     min-width:max-content;
     background:#fff;
     margin-top:15px;
-    padding:10px 10px
+    padding:10px 10px;
+    z-index:9
   }
   .plugin-revision-wrp:hover .plugin-revisions-vers a{
     display:block;
@@ -296,27 +255,7 @@ add_action( 'admin_init', 'eos_pv_restore_revision_links' );
  * @since 0.0.6
  */
 function eos_pv_restore_revision_links() {
-  $key = eos_plugin_revision_key();
-  if( $key ){
-    $all_plugin_files = scandir( WP_PLUGIN_DIR );
-    if( $all_plugin_files && is_array( $all_plugin_files ) && ! empty( $all_plugin_files ) ) {
-      require_once PLUGIN_REVISIONS_PLUGIN_DIR . '/admin/classes/class-plugversions-restoring-link.php';
-      foreach( $all_plugin_files as $plugin ) {
-        if( 'zip' === pathinfo( $plugin, PATHINFO_EXTENSION ) ) {
-          if( false !== strpos( $plugin, 'pr-' . $key  .'-' ) && false !== strpos( $plugin, '-ver-' ) ) {
-            $arr = explode( 'ver-', $plugin );
-            $arr = explode( '-', $arr[0] );
-            if( 'pr' === $arr[0] && isset( $arr[1] ) && $key === $arr[1] && isset( $arr[2] ) ) {
-              $version = $arr[2];
-              $plugin_name = str_replace( array( 'pr-' . $key . '-' . $version . '-ver-', '.zip' ), array( '', '' ), $plugin );
-              if( is_dir( WP_PLUGIN_DIR . '/' . $plugin_name ) ) {
-                $link = new PlugVersions_Restoring_Link( $key, $version, $plugin, $plugin_name );
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+  require_once PLUGIN_REVISIONS_PLUGIN_DIR . '/admin/classes/class-plugversions-restoring-link.php';
+  $link = new PlugVersions_Restoring_Link();
 }
 

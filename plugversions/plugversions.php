@@ -6,7 +6,9 @@ Author: Jose Mortellaro
 Author URI: https://josemortellaro.com
 Domain Path: /languages/
 Text Domain: plugversions
-Version: 0.0.7
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+Version: 0.0.8
 */
 /*  This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
