@@ -1,70 +1,76 @@
-=== PlugVersions - Easily rollback to previous versions of your plugins ===
+=== PlugVersions - Easily roll back to previous versions of your plugins. ===
 
 Contributors:      giuse
 Requires at least: 4.6
-Tested up to: 6.8
+Tested up to:      6.8
 Requires PHP:      7.4
-Stable tag:        0.0.8
+Stable tag:        0.2.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Tags:              restore, update, backup, rollback, plugin versions
 
-it retains up to three versions when you update a plugin. It works also with premium and custom plugins.
+Retains up to three versions when you update a plugin. It works with premium and custom plugins too.
 
 
 == Description ==
 
-it retains up to three versions when you update a plugin. It works also with premium and custom plugins.
-If the new version of a plugin doesn't work as expected, you can rollback simply by clicking on a previous version.
-It works the same as the post revisions, but for plugins.
-There is already <a href="https://wordpress.org/plugins/wp-rollback/">WP Rollback</a> that gives you the possibility to rollback.
-<a href="https://wordpress.org/plugins/wp-rollback/">WP Rollback</a> is also an amazing plugin, and I really recommended it if you have only plugins that are on the repository.
-PlugVersions works also with custom and premium plugins. This is at the moment the big difference with other rollback plugins.
-More features like plugin version previews are in the roadmap.
+PlugVersions lets you retain up to three versions each time you update a plugin, including premium and custom plugins.
+
+If a new version doesn’t work as expected, you can easily roll back by selecting a previous version with a single click. It works similarly to post revisions, but for plugins.
+
+While <a href="https://wordpress.org/plugins/wp-rollback/">WP Rollback</a> is a great solution for plugins hosted on the WordPress repository, PlugVersions supports all plugins, including those not available on the repo.
+
+This broader compatibility is currently the key difference between PlugVersions and other rollback plugins.
+
+Additional features, such as version previews, are on the roadmap.
 
 
-== How to rollback to a previous version of a plugin ==
-* Install and activate PlugVersions
-* Go to the page of plugins
-* All the plugins that were updated will show the action link "Revisions". By going with your mouse on Revisions you will see the list of the previous versions
-* Click on the version that you want to restore
-* Done!
 
+== How to roll back to a previous version of a plugin ==
+* Install and activate PlugVersions.
+* Go to the Plugins page in your WordPress dashboard.
+* For any plugin that has been updated, you'll see a "Revisions" action link. Hover over it to view the list of previously stored versions.
+* Click on the version you want to restore.
+* That’s it. Your plugin is rolled back!
 
-No settings for this plugin. This free version gives you the possibility to retain up to three previous plugin versions.
-In the page of plugins you will find the previous versions under the action link "Revisions".
+There are no settings to configure.
+This free version allows you to retain up to three previous plugin versions.
+You’ll find them listed under the "Revisions" link on the Plugins page.
 
-
-== Help ==
-For any question or if something doesn't work as expected don't hesitate to open a thread on the <a href="https://wordpress.org/support/plugin/plugversions/">Support Forum</a>
 
 
 == Changelog ==
 
+= 0.2.0 =
+* Fixed: Extra version entry added during plugin backup
+
+= 0.1.0 =
+* Added: Replaced the PlugVersions backup filter to handle all updates, including manual plugin updates. A big thank you to <a href="https://github.com/vincenzocasu">Vincenzo Casu</a> for providing the code!
+
 = 0.0.8 =
-*Fix: Vulnerability when a new version is restored. Thanks to Arkadiusz Hydzik for finding the vulnerability.
-*Fix: Revisions list not working in the page of plugins.
+* Fix: Vulnerability when a new version is restored. Thanks to Arkadiusz Hydzik for finding the vulnerability.
+* Fix: Revisions list not working in the page of plugins.
 
 = 0.0.7 =
-*Fix: PHP warning
+* Fix: PHP warning
 
 = 0.0.6 =
-*Enhanced: Replaced unzipped versions with zipped versions
+* Enhanced: Replaced unzipped versions with zipped versions
 
 = 0.0.5 =
-*Fix: Fatal error on plugin deletion
+* Fix: Fatal error on plugin deletion
 
 = 0.0.4 =
-*Fix: Plugin updates counter in the admin top bar on frontend
+* Fix: Plugin updates counter in the admin top bar on frontend
 
 = 0.0.3 =
-*Fixed: not possible to delete the plugin from the page of plugins
+* Fixed: not possible to delete the plugin from the page of plugins
 
 = 0.0.2 =
-*Fixed: plugin old versions were considered in the update notifications
+* ixed: plugin old versions were considered in the update notifications
 
 = 0.0.1 =
-*Initial release
+* Initial release
 
 
 
