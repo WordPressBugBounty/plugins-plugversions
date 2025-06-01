@@ -1,11 +1,6 @@
 <?php
 /**
  * Class to add the restoring link.
- * This class is responsible for adding a link to restore plugin versions in the plugins list.
- * It checks for existing plugin versions, adds action links to restore them,
- * and cleans up the plugins list by removing unzipped versions.
- *
- * @version  0.0.8
  *
  * @package Plugversions
  */
@@ -14,9 +9,6 @@ defined( 'PLUGIN_REVISIONS_PLUGIN_DIR' ) || exit; // Exit if not accessed from P
 
 /**
  * Class PlugVersions Restoring Link
- * This class is used to add a link for restoring plugin versions.
- * It checks for existing plugin versions in the plugins directory,
- * adds action links to restore them, and cleans up the plugins list
  *
  *
  * @version  0.0.6
@@ -42,8 +34,6 @@ class PlugVersions_Restoring_Link {
 
     /**
 	 * Main Constructor
-	 * This constructor initializes the class, checks for the plugin revision key,
-	 * populates the plugins data, and adds necessary filters for action links and cleaning the plugins list.
 	 *
 	 * @since  0.0.6
 	 */	
@@ -61,9 +51,6 @@ class PlugVersions_Restoring_Link {
 
     /**
 	 * Populate plugins data
-	 * This function scans the plugins directory for plugin zip files that match the revision key.
-	 * It extracts the plugin name and version from the zip file names and organizes them into an array.
-	 * The array contains plugin names as keys, with their versions and zip file names as values.
 	 *
 	 * @since  0.0.6
 	 */	
@@ -99,8 +86,6 @@ class PlugVersions_Restoring_Link {
 
     /**
 	 * Remove unzipped versions from the plugins list
-	 * This function iterates through the plugins list and removes any plugin that has a name starting with 'pr-' followed by the revision key.
-	 * It ensures that only the original plugins remain in the list, excluding any unzipped versions created by the plugin revisions.
 	 *
 	 * @param array $plugins
 	 * @param  0.0.8
@@ -116,9 +101,6 @@ class PlugVersions_Restoring_Link {
 
     /**
 	 * Add action link to restore plugin version.
-	 * This function adds a link to the plugin action links in the plugins list.
-	 * It checks if the plugin has any versions available for restoration,
-	 * and if so, it adds a link to restore each version.
 	 *
 	 * @param array $actions
 	 * @param string $plugin_file

@@ -10,10 +10,6 @@ defined( 'PLUGIN_REVISIONS_PLUGIN_DIR' ) || exit; // Exit if not accessed from P
 add_action( 'wp_ajax_eos_plugin_reviews_restore_version','eos_plugin_reviews_restore_version' );
 /**
  * Restore plugin version
- * This function is triggered by an Ajax request to restore a plugin version.
- * It verifies the nonce for security, checks user permissions, and restores the plugin version
- * from a specified directory. It unzips the plugin version if it is in zip format, renames the
- * plugin directory, and activates the plugin.
  *
  * @since  0.0.1
  */ 
