@@ -8,7 +8,11 @@ Domain Path: /languages/
 Text Domain: plugversions
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-Version: 0.0.8
+Version: 0.1.0
+Requires at least: 5.0
+Tested up to: 6.8
+Requires PHP: 7.4
+Tags: plugin, versions, revisions, restore, rollback, backup, management
 */
 /*  This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,6 +36,9 @@ if( is_admin() ){
 add_filter( 'site_transient_update_plugins', function( $obj ) {
   /**
    * Remove plugin revisions from the update notifications
+   * This filter is applied to the site transient update plugins object.
+   * It checks if the object is set and is an object, then it iterates through the response array.
+   * If it finds a key that matches the plugin revision key, it removes that entry from the response.
    *
    * @since  0.0.1
    */ 
@@ -50,6 +57,9 @@ add_filter( 'site_transient_update_plugins', function( $obj ) {
 
 /**
  * Return revision key
+ * This key is used to identify the plugin revisions.
+ * It is based on the current time and is sanitized to ensure it is safe for use.
+ * If the key does not exist, it creates a new one and saves it in the site options.
  *
  * @since  0.0.1
  */
@@ -69,8 +79,16 @@ function eos_plugin_revision_key(){
 }
 
 /**
- * Create zip pclzip.
+ * Create a zip file using PclZip.
+ * This function creates a zip file from a specified directory using the PclZip library.
+ * It checks if the PclZip class exists, retrieves all files from the directory,
+ * and creates a zip file at the specified destination.
+ * If the zip creation fails, it returns false; otherwise, it returns true.
  *
+ * @param string $destination The path where the zip file will be created.
+ * @param string $zip_dirname The directory name to be zipped.
+ * @return bool True on success, false on failure.
+ * 
  * @since   0.0.6
  *
  */
@@ -84,6 +102,7 @@ function eos_pv_create_zip_pclzip( $destination, $zip_dirname ) {
         if ( defined( 'PCLZIP_OPT_REMOVE_PATH' ) ) {
           $zip_created = $zip->create( $files, PCLZIP_OPT_REMOVE_PATH, WP_PLUGIN_DIR );
           if( 0 == $zip_created ) {
+            // If the zip creation fails, return false
             return false;
           }
           return true;
@@ -95,7 +114,9 @@ function eos_pv_create_zip_pclzip( $destination, $zip_dirname ) {
 }
 
 /**
- * Get files by path.
+ * This function retrieves all files from a given directory path, including subdirectories.
+ * It uses the RecursiveDirectoryIterator and RecursiveIteratorIterator classes to traverse the directory structure.
+ * The function returns an array of file paths, with backslashes replaced by forward slashes for consistency.
  *
  * @since 0.0.6
  */

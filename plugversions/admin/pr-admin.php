@@ -7,6 +7,7 @@
 defined( 'PLUGIN_REVISIONS_PLUGIN_DIR' ) || exit; // Exit if not accessed from Plugversions.
 
 if( wp_doing_ajax() ){
+  //* Include the Ajax admin file.
   require_once PLUGIN_REVISIONS_PLUGIN_DIR . '/admin/pr-ajax-admin.php';
 }
 
@@ -20,57 +21,6 @@ register_activation_hook( __FILE__, function() {
     update_site_option( 'plugin_revisions',array( 'time' => time() ) );
   }
 } );
-
-add_filter( 'upgrader_package_options',function( $options ) {
-  /**
-   * Update revisions after plugin update
-   *
-   * @since  0.0.1
-   */
-  if( isset( $options['destination'] ) && isset( $options['hook_extra'] ) ){
-    $hook_extra = $options['hook_extra'];
-    if( isset( $hook_extra['plugin'] ) ){
-      $plugin = $hook_extra['plugin'];
-      $plugin_name = dirname( $plugin );
-      $path = sanitize_option( 'upload_path',$options['destination'].'/'.$plugin );
-      if( file_exists( $path ) ){
-        $plugin_data = get_plugin_data( $path );
-        $version = $plugin_data['Version'];
-        if( !class_exists( 'WP_Upgrader' ) ){
-          if( file_exists( ABSPATH.'wp-admin/includes/class-wp-upgrader.php' ) ){
-            require_once ABSPATH.'/wp-admin/includes/class-wp-upgrader.php';
-          }
-        }
-        if( class_exists( 'WP_Upgrader' ) ){
-          $upgrader = new WP_Upgrader();
-          $key = eos_plugin_revision_key();
-          if( $key ){
-            $zip_dirname = 'pr-'.$key.'-'.sanitize_option( 'upload_path',$version ).'-ver-'.dirname( $plugin );
-            $destination = str_replace( dirname( $plugin ), $zip_dirname, sanitize_option( 'upload_path',plugin_dir_path( $path )) );
-            if( !is_dir( $destination ) ){
-              global $wp_filesystem;
-          		if( empty( $wp_filesystem ) ){
-          			require_once ( ABSPATH .'/wp-admin/includes/file.php' );
-          			WP_Filesystem();
-          		}
-          		$wp_filesystem->mkdir( $destination );
-        		}
-            if( !empty( $wp_filesystem ) && $wp_filesystem->is_dir( $destination ) ){
-              $result = copy_dir( plugin_dir_path( $path ),$destination );
-              $zip_dirname .= '.zip';
-              if( eos_pv_create_zip_pclzip( $destination, $zip_dirname ) ) {
-                // If zipped archive created delete the unzipped directory.
-                $wp_filesystem->delete( $destination, true );
-              }
-              eos_plugin_revisions_remove_versions( apply_filters( 'max_plugin_revisions',4 ),$plugin_name );
-            }
-          }
-        }
-      }
-    }
-  }
-  return $options;
-},10,4 );
 
 add_action( 'admin_head',function(){
   /**
@@ -117,6 +67,7 @@ add_action( 'admin_head',function(){
 add_action( 'admin_footer',function(){
   /**
    * Add JS to restore a revision via Ajax
+   * This script is added to the plugins.php and plugin-editor.php pages.
    *
    * @since  0.0.1
    */    
@@ -180,6 +131,7 @@ add_action( 'admin_footer',function(){
 
 /**
  * Remove all plugin revisions
+ * This function removes all revisions of a specific plugin or all plugins if no plugin name is provided.
  *
  * @since  0.0.1
  */  
@@ -233,6 +185,7 @@ function eos_plugin_revisions_remove_all_versions(){
 
 /**
  * Revisions scandir
+ * This function scans the plugin revisions directory and returns an array of files sorted by modification time.
  *
  * @since  0.0.1
  */ 
@@ -251,6 +204,7 @@ function eos_plugin_revisions_scandir( $dir ) {
 add_action( 'admin_init', 'eos_pv_restore_revision_links' );
 /**
  * Add links to restore previous revisions from zipped plugins.
+ * This function initializes the restoring link functionality for plugin revisions.
  *
  * @since 0.0.6
  */
@@ -259,3 +213,186 @@ function eos_pv_restore_revision_links() {
   $link = new PlugVersions_Restoring_Link();
 }
 
+
+
+add_filter(
+	'upgrader_package_options',
+	function ( $options ) {
+		//*
+		//* Update revisions after plugin update
+    //* This filter is used to create a backup of the plugin before it is updated.
+		//*
+		//* @since  0.0.1
+		//* //
+if ( isset( $options['destination'] ) && isset( $options['hook_extra'] ) ) {
+	$hook_extra = $options['hook_extra'];
+	if ( isset( $hook_extra['plugin'] ) ) {
+		$plugin      = $hook_extra['plugin'];
+		$plugin_name = dirname( $plugin );
+		$path        = sanitize_option( 'upload_path', $options['destination'] . '/' . $plugin );
+		if ( file_exists( $path ) ) {
+				$plugin_data = get_plugin_data( $path );
+				$version     = $plugin_data['Version'];
+			if ( ! class_exists( 'WP_Upgrader' ) ) {
+				if ( file_exists( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' ) ) {
+							require_once ABSPATH . '/wp-admin/includes/class-wp-upgrader.php';
+				}
+			}
+			if ( class_exists( 'WP_Upgrader' ) ) {
+				$upgrader = new WP_Upgrader();
+				$key      = eos_plugin_revision_key();
+				if ( $key ) {
+					$zip_dirname = 'pr-' . $key . '-' . sanitize_option( 'upload_path', $version ) . '-ver-' . dirname( $plugin );
+					$destination = str_replace( dirname( $plugin ), $zip_dirname, sanitize_option( 'upload_path', plugin_dir_path( $path ) ) );
+					if ( ! is_dir( $destination ) ) {
+						global $wp_filesystem;
+						if ( empty( $wp_filesystem ) ) {
+							require_once ABSPATH . '/wp-admin/includes/file.php';
+							WP_Filesystem();
+						}
+						$wp_filesystem->mkdir( $destination );
+					}
+					if ( ! empty( $wp_filesystem ) && $wp_filesystem->is_dir( $destination ) ) {
+						$result       = copy_dir( plugin_dir_path( $path ), $destination );
+						$zip_dirname .= '.zip';
+						if ( eos_pv_create_zip_pclzip( $destination, $zip_dirname ) ) {
+							// If zipped archive created delete the unzipped directory.
+							$wp_filesystem->delete( $destination, true );
+						}
+						eos_plugin_revisions_remove_versions( apply_filters( 'max_plugin_revisions', 4 ), $plugin_name );
+					}
+				}
+			}
+		}
+	}
+}
+		return $options;
+	},
+	10,
+	4
+);
+
+
+/**
+ * Backup the plugin before update.
+ * This filter allows you to catch all possible update scenarios, including bulk and manual replacements, as well as Ajax updates.
+ *
+ * @param string $source Plugin source path.
+ * @param string $remote_source Plugin remote source path.
+ * @param object $upgrader Upgrader object.
+ * @param array  $hook_extra Hook extra data.
+ * @return string
+ *
+ * @author Vincenzo Casu.
+ */
+function eos_plugin_unversal_backup( $source, $remote_source, $upgrader, $hook_extra ) {
+	// error_log( 'HOOK_EXTRA: ' . json_encode( $hook_extra ) );
+
+	// Load get_plugin_data() if not exists.
+	if ( ! function_exists( 'get_plugin_data' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
+
+	// Get plugins to backup.
+	$plugins_to_backup = array();
+
+	if ( ! empty( $hook_extra['plugins'] ) && is_array( $hook_extra['plugins'] ) ) {
+		// Bulk update (hook_extra['plugins']).
+		// error_log( 'Bulk update plugins: ' . json_encode( $hook_extra['plugins'] ) );
+		$plugins_to_backup = $hook_extra['plugins'];
+	} elseif ( ! empty( $hook_extra['plugin'] ) ) {
+		// Single AJAX update (hook_extra['plugin']).
+		// error_log( 'Single plugin update: ' . $hook_extra['plugin'] );
+		$plugins_to_backup = array( $hook_extra['plugin'] );
+	} elseif ( ! empty( $hook_extra['type'] ) && $hook_extra['type'] === 'plugin'
+		&& ! empty( $hook_extra['action'] )
+		&& in_array( $hook_extra['action'], array( 'update', 'install' ), true ) ) {
+		// Fallback “replace from ZIP” or other plugin-based cases.
+
+		// Get slug from source.
+		$slug = basename( $source );
+		// error_log( 'Fallback slug: ' . $slug );
+
+		$all = get_plugins( '/' . $slug );
+		// error_log( 'Found via get_plugins: ' . json_encode( array_keys( $all ) ) );
+
+		if ( ! empty( $all ) ) {
+			$main_file           = key( $all );
+			$plugins_to_backup[] = $slug . '/' . $main_file;
+		} else {
+			// error_log( 'No plugin data for slug ' . $slug );
+			return $source;
+		}
+	} else {
+		// error_log( 'Nothing to backup, return.' );
+		return $source;
+	}
+
+	// Preparing Filesystem & Upgrader.
+	if ( ! class_exists( 'WP_Upgrader' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+	}
+
+	global $wp_filesystem;
+	if ( empty( $wp_filesystem ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+	}
+
+	$key = eos_plugin_revision_key();
+	// error_log( 'Revision key: ' . $key );
+	if ( ! $key ) {
+		return $source;
+	}
+
+	foreach ( $plugins_to_backup as $plugin_file ) {
+		// error_log( 'Backing up: ' . $plugin_file );
+
+		$plugin_dir = WP_PLUGIN_DIR . '/' . dirname( $plugin_file );
+		$full_path  = WP_PLUGIN_DIR . '/' . $plugin_file;
+
+		if ( ! file_exists( $full_path ) ) {
+			// error_log( 'Main file non trovato: ' . $full_path );
+			continue;
+		}
+
+		// Metadata & version.
+		$plugin_data = get_plugin_data( $full_path );
+		$version     = $plugin_data['Version'];
+		// error_log( 'Version: ' . $version );
+
+		$slug        = dirname( $plugin_file );
+		$zip_dirname = 'pr-' . $key . '-' . sanitize_file_name( $version ) . '-ver-' . $slug;
+		// error_log( 'zip_dirname: ' . $zip_dirname );
+
+		// Base dir & Backup destination.
+		$base_dir = plugin_dir_path( $full_path );
+		// error_log( 'base_dir: ' . $base_dir );
+		$backup_dir = trailingslashit( str_replace( $slug, $zip_dirname, $base_dir ) );
+		// error_log( 'backup_dir: ' . $backup_dir );
+
+		// Make Backup dir and move plugin files into it.
+		if ( ! $wp_filesystem->is_dir( $backup_dir ) ) {
+			$wp_filesystem->mkdir( $backup_dir );
+		}
+		if ( $wp_filesystem->is_dir( $backup_dir ) ) {
+			copy_dir( $plugin_dir, $backup_dir );
+
+			$zip_file = $zip_dirname . '.zip';
+			// error_log( 'zip_file: ' . $zip_file );
+
+			if ( eos_pv_create_zip_pclzip( $backup_dir, $zip_file ) ) {
+				$wp_filesystem->delete( untrailingslashit( $backup_dir ), true );
+			}
+
+			// Remove old versions of the plugin.
+			eos_plugin_revisions_remove_versions(
+				apply_filters( 'max_plugin_revisions', 4 ),
+				$slug
+			);
+		}
+	}
+
+	return $source;
+}
+add_filter( 'upgrader_source_selection', 'eos_plugin_unversal_backup', 10, 4 );
