@@ -530,3 +530,16 @@ add_action('admin_notices', function () {
     </div>
     <?php
 });
+
+add_filter( 'plugin_action_links_plugversions/plugversions.php', function( $links ) {
+  /**
+   * Add plugin action link for Annual Protection Plan.
+   *
+   * @param array $links Array of plugin action links
+   * @return array Modified array of plugin action links
+   */
+  $plan_link = '<a href="https://shop.josemortellaro.com/downloads/plugin-update-rescue-annual-protection-plan/" style="color: #d63638; font-weight: bold;">' . esc_html__( 'Protection Plan', 'plugversions' ) . '</a>'; 
+  // Add to the beginning of the links array
+  array_unshift( $links, $plan_link );
+  return $links;
+} );

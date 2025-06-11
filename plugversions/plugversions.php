@@ -8,7 +8,7 @@ Domain Path: /languages/
 Text Domain: plugversions
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-Version: 0.2.0
+Version: 0.2.1
 Requires at least: 4.9
 Tested up to: 6.8
 Requires PHP: 7.4

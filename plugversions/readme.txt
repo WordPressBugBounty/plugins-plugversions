@@ -4,7 +4,7 @@ Contributors:      giuse
 Requires at least: 4.6
 Tested up to:      6.8
 Requires PHP:      7.4
-Stable tag:        0.2.0
+Stable tag:        0.2.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Tags:              restore, update, backup, rollback, plugin versions
@@ -37,15 +37,21 @@ There are no settings to configure.
 This free version allows you to retain up to three previous plugin versions.
 You’ll find them listed under the "Revisions" link on the Plugins page.
 
+== Help in case of issues after a plugin update ==
+Want peace of mind when updating your plugins? Check out our <a href="https://shop.josemortellaro.com/downloads/plugin-update-rescue-annual-protection-plan/">Plugin Update Rescue – Annual Protection Plan</a>
+If something breaks after an update, we'll step in and fix it.
 
 
 == Changelog ==
+
+= 0.2.1 =
+* Added: Link to the <a href="https://shop.josemortellaro.com/downloads/plugin-update-rescue-annual-protection-plan/">Annual Protection Plan</a> for the plugin updates in the plugins page
 
 = 0.2.0 =
 * Fixed: Extra version entry added during plugin backup
 
 = 0.1.0 =
-* Added: Replaced the PlugVersions backup filter to handle all updates, including manual plugin updates. A big thank you to <a href="https://github.com/vincenzocasu">Vincenzo Casu</a> for providing the code!
+* Added: Replaced the PlugVersions backup filter to handle all updates, including manual plugin updates. A big thank you to <a href="https://kolorweb.it/">Vincenzo Casu</a> for providing the code!
 
 = 0.0.8 =
 * Fix: Vulnerability when a new version is restored. Thanks to Arkadiusz Hydzik for finding the vulnerability.
