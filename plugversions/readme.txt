@@ -37,6 +37,13 @@ There are no settings to configure.
 This free version allows you to retain up to three previous plugin versions.
 You’ll find them listed under the "Revisions" link on the Plugins page.
 
+
+== How to Safely Update a WordPress Plugin ==
+To learn how to safely update a WordPress plugin, please read the detailed guide here:  
+[How to Safely Update a WordPress Plugin](https://josemortellaro.com/how-to-safely-update-a-wordpress-plugin/)
+
+
+
 == Help in case of issues after a plugin update ==
 Want peace of mind when updating your plugins? Check out our <a href="https://shop.josemortellaro.com/downloads/plugin-update-rescue-annual-protection-plan/">Plugin Update Rescue – Annual Protection Plan</a>
 If something breaks after an update, we'll step in and fix it.
