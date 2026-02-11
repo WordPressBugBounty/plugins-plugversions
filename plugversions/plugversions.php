@@ -4,6 +4,7 @@ Plugin Name: PlugVersions
 Description: it retains up to three versions when you update a plugin. It works also with premium and custom plugins.
 Author: Jose Mortellaro
 Author URI: https://josemortellaro.com
+Plugin URI: https://josemortellaro.com
 Domain Path: /languages/
 Text Domain: plugversions
 License: GPLv2 or later
@@ -41,7 +42,7 @@ add_filter( 'site_transient_update_plugins', function( $obj ) {
    * If it finds a key that matches the plugin revision key, it removes that entry from the response.
    *
    * @since  0.0.1
-   */ 
+   */
   if( isset( $obj ) && is_object( $obj ) && isset( $obj->response ) ) {
     $response = $obj->response;
     $key = eos_plugin_revision_key();
@@ -88,7 +89,7 @@ function eos_plugin_revision_key(){
  * @param string $destination The path where the zip file will be created.
  * @param string $zip_dirname The directory name to be zipped.
  * @return bool True on success, false on failure.
- * 
+ *
  * @since   0.0.6
  *
  */
