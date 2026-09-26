@@ -161,6 +161,8 @@ add_action( 'admin_footer',function(){
 function eos_plugin_revisions_remove_versions( $N = false,$plugin_name = false ){
   $key = eos_plugin_revision_key();
   $all_dirs = eos_plugin_revisions_scandir( dirname( PLUGIN_REVISIONS_PLUGIN_DIR ) );
+  $prefix = 'pr-'.$key.'-';
+  $suffix = '-ver-'.$plugin_name.'.zip';
   global $wp_filesystem;
   if( empty( $wp_filesystem ) ){
     require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -168,7 +170,7 @@ function eos_plugin_revisions_remove_versions( $N = false,$plugin_name = false )
   }
   if( $all_dirs && !empty( $all_dirs ) ){
     foreach( $all_dirs as $all_dir ){
-      if( substr( $all_dir,-strlen( $plugin_name ),strlen( $plugin_name ) ) !== $plugin_name ){
+      if( 0 !== strpos( $all_dir,$prefix ) || substr( $all_dir,-strlen( $suffix ) ) !== $suffix ){
         unset( $all_dirs[array_search( $all_dir,$all_dirs )] );
       }
     }

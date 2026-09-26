@@ -2,9 +2,9 @@
 
 Contributors:      giuse
 Requires at least: 4.6
-Tested up to: 7.0
+Tested up to:      7.3
 Requires PHP:      7.4
-Stable tag:        0.2.1
+Stable tag:        0.3.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Tags:              restore, update, backup, rollback, plugin versions
@@ -51,6 +51,8 @@ If something breaks after an update, we'll step in and fix it.
 
 == Changelog ==
 
+= 0.3.0 =
+* Fix: no ZIP was selected for deletion in the retention function
 = 0.2.1 =
 * Added: Link to the <a href="https://shop.josemortellaro.com/downloads/plugin-update-rescue-annual-protection-plan/">Annual Protection Plan</a> for the plugin updates in the plugins page
 
