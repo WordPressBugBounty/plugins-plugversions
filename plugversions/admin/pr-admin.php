@@ -103,7 +103,10 @@ add_action( 'admin_footer',function(){
     for(n;n<as.length;++n){
       as[n].addEventListener('click',function(e){
         e.preventDefault();
-        this.closest('td').classList.add('plugin-revision-processing');
+        var cell = this.closest('.plugin-title') || this.closest('td') || this.closest('th');
+        if(cell){
+          cell.classList.add('plugin-revision-processing');
+        }
         this.style.backgroundPosition = 'center center';
         for(var k=0;k<as.length;++k){
           as[k].style.pointerEvents = 'none';

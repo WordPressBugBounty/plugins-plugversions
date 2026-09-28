@@ -9,9 +9,7 @@ Domain Path: /languages/
 Text Domain: plugversions
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-Version: 0.3.0
-Requires at least: 4.9
-Tested up to: 6.8
+Version: 0.3.1
 Requires PHP: 7.4
 Tags: plugin, versions, revisions, restore, rollback, backup, management
 */

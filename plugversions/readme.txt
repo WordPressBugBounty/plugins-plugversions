@@ -2,9 +2,9 @@
 
 Contributors:      giuse
 Requires at least: 4.6
-Tested up to:      7.3
+Tested up to:      7.1
 Requires PHP:      7.4
-Stable tag:        0.3.0
+Stable tag:        0.3.1
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Tags:              restore, update, backup, rollback, plugin versions
@@ -50,6 +50,9 @@ If something breaks after an update, we'll step in and fix it.
 
 
 == Changelog ==
+
+= 0.3.1 =
+* Fix: restoring a revision from the Plugins screen failed on WordPress 7.1+, where the plugin name cell is a table header instead of a table cell. The restore link still works on earlier WordPress versions.
 
 = 0.3.0 =
 * Fix: no ZIP was selected for deletion in the retention function
